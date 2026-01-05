@@ -1,0 +1,4 @@
+Transaction{transactionId='A9001', fromAccount='A5001', toAccount='A5002', amount=500.0, transactionType='TRANSFER', timestamp=2026-01-05T20:52:39.879529100}
+Transaction{transactionId='A9001', fromAccount='A5001', toAccount='A5002', amount=500.0, transactionType='TRANSFER', timestamp=2026-01-05T20:55:26.100236300}
+Transaction{transactionId='A9001', fromAccount='A5001', toAccount='A5002', amount=500.0, transactionType='TRANSFER', timestamp=2026-01-05T21:03:42.000708800}
+Transaction{transactionId='A9001', fromAccount='A5001', toAccount='A5002', amount=2500.0, transactionType='TRANSFER', timestamp=2026-01-05T21:04:56.903476700}
