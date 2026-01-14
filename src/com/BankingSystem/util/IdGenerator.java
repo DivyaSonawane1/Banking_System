@@ -25,6 +25,6 @@ public class IdGenerator {
     //generating Transaction Id.....
 
     public static String generateTransactionId(){
-        return "A" + transactionCounter.incrementAndGet();
+        return "T" + transactionCounter.incrementAndGet();
     }
 }
