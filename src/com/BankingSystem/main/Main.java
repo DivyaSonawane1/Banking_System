@@ -2,97 +2,132 @@ package com.BankingSystem.main;
 
 import com.BankingSystem.model.Account;
 import com.BankingSystem.model.User;
-import com.BankingSystem.service.*;
+import com.BankingSystem.service.AccountService;
+import com.BankingSystem.service.TransactionService;
+import com.BankingSystem.service.UserService;
 import com.BankingSystem.multithreading.TransactionTask;
 
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 
-        //services......
         UserService userService = new UserService();
         AccountService accountService = new AccountService();
-        TransactionService transactionService = new TransactionService(accountService);
+        TransactionService transactionService =
+                new TransactionService(accountService);
 
-        //creating users.....
+        while (true) {
+            System.out.println("\n===== Banking System =====");
+            System.out.println("1. Create User");
+            System.out.println("2. Create Account");
+            System.out.println("3. Deposit Money");
+            System.out.println("4. Withdraw Money");
+            System.out.println("5. Transfer Money");
+            System.out.println("6. Show Account Balance");
+            System.out.println("7. Exit");
+            System.out.print("Enter choice: ");
 
-        //user1.....
-        System.out.print("Enter NAME for User 1 : ");
-        String name1 = scanner.nextLine();
-        System.out.print("Enter EMAIL for User 1 : ");
-        String email1 = scanner.nextLine();
+            int choice = sc.nextInt();
+            sc.nextLine(); // consume newline
 
-        User user1 = userService.createUser(name1, email1);
+            try {
+                switch (choice) {
 
-        //user2.....
-        System.out.print("Enter NAME for User 2 : ");
-        String name2 = scanner.nextLine();
-        System.out.print("Enter EMAIL for User 2 : ");
-        String email2 = scanner.nextLine();
+                    case 1: // Create User
+                        System.out.print("Enter User Name: ");
+                        String name = sc.nextLine();
 
-        User user2 = userService.createUser(name2, email2);
+                        System.out.print("Enter Email: ");
+                        String email = sc.nextLine();
 
-        //creating accounts....
-        System.out.print("Enter type of account for user 1(SAVINGS/CURRENT): ");
-        String type1 = scanner.nextLine();
+                        User user = userService.createUser(name, email);
+                        System.out.println("User created. User ID: " + user.getUserId());
+                        break;
 
-        System.out.print("Enter type of account for user2(SAVINGS/CURRENT): ");
-        String type2 = scanner.nextLine();
+                    case 2: // Create Account
+                        System.out.print("Enter User ID: ");
+                        String userId = sc.nextLine();
 
-        Account acc1 = accountService.createAccount(user1.getUserId(), type1);
-        Account acc2 = accountService.createAccount(user2.getUserId(), type2);
+                        System.out.print("Enter Account Type (SAVINGS/CURRENT): ");
+                        String accountType = sc.nextLine();
 
-        //the amount ......
-        System.out.print("Enter Initial deposit for user : " + " \" " +name1 + "\" : " );
-        double deposit1 = scanner.nextDouble();
-        scanner.nextLine();
+                        Account account =
+                                accountService.createAccount(userId, accountType);
 
-        accountService.deposit(acc1.getAccountNumber(), deposit1);
+                        System.out.println("Account created. Account Number: "
+                                + account.getAccountNumber());
+                        break;
 
-        System.out.print("Enter Initial deposit for user : " + " \" " +name2 + "\" : ");
-        double deposit2 = scanner.nextDouble();
-        scanner.nextLine();
+                    case 3: // Deposit
+                        System.out.print("Enter Account Number: ");
+                        String depAcc = sc.nextLine();
 
-        accountService.deposit(acc2.getAccountNumber(), deposit2);
+                        System.out.print("Enter Amount to Deposit: ");
+                        double depAmount = sc.nextDouble();
 
-        //showcase initial balances.....
+                        accountService.deposit(depAcc, depAmount);
+                        System.out.println("Deposit successful.");
+                        break;
 
-        System.out.println("Initial Balances:");
-        System.out.println(acc1.getAccountNumber() + " belongs to user: " + name1 + "\nCurrent balance: " + acc1.getBalance() + " Rupees");
-        System.out.println(acc2.getAccountNumber() + " belongs to user: " + name2 + "\nCurrent balance: " + acc2.getBalance() + " Rupees");
+                    case 4: // Withdraw
+                        System.out.print("Enter Account Number: ");
+                        String witAcc = sc.nextLine();
 
-        //inputs for transferring......
+                        System.out.print("Enter Amount to Withdraw: ");
+                        double witAmount = sc.nextDouble();
 
-        System.out.print("\nEnter transfer amount from user: " + "\"" + name1 + "\"" + "to user: " + "\"" + name2 + "\" =" );
-        double transferAmount = scanner.nextDouble();
+                        accountService.withdraw(witAcc, witAmount);
+                        System.out.println("Withdrawal successful.");
+                        break;
 
-        //concurrent transactions.....
-        Thread t1 = new Thread(
-                new TransactionTask(
-                        transactionService,
-                        acc1.getAccountNumber(),
-                        acc2.getAccountNumber(),
-                        transferAmount),
-                "Transfer-Thread");
+                    case 5: // Transfer (MULTITHREADED)
+                        System.out.print("Enter FROM Account Number: ");
+                        String fromAcc = sc.nextLine();
 
-        //starting the threads.....
-        t1.start();
+                        System.out.print("Enter TO Account Number: ");
+                        String toAcc = sc.nextLine();
 
-        //waiting for completion.......
-        try{
-            t1.join();
-        }catch (InterruptedException e){
-            System.err.println("Main Thread Interrupted");
+                        System.out.print("Enter Amount: ");
+                        double amount = sc.nextDouble();
+
+                        TransactionTask task = new TransactionTask(
+                                transactionService,
+                                fromAcc,
+                                toAcc,
+                                amount
+                        );
+
+                        Thread t = new Thread(task);
+                        t.start();
+                        t.join();
+
+                        System.out.println("Transfer completed.");
+                        break;
+
+                    case 6: // Show Balance
+                        System.out.print("Enter Account Number: ");
+                        String balAcc = sc.nextLine();
+
+                        double balance = accountService.getBalance(balAcc);
+                        System.out.println("Balance: " + balance);
+                        break;
+
+                    case 7: // Exit
+                        System.out.println("Thank you for using Banking System.");
+                        sc.close();
+                        System.exit(0);
+
+                    default:
+                        System.out.println("Invalid choice.");
+
+                }
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
         }
-
-        System.out.print("\nFinal Balances:");
-        System.out.println(acc1.getAccountNumber() + " belongs to user: " + name1 + " has " + acc1.getBalance() + " Rupees");
-        System.out.println(acc2.getAccountNumber() + " belongs to user: " + name2 + " has " + acc2.getBalance() + " Rupees");
-
-        scanner.close();
-
     }
 }
