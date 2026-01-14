@@ -90,4 +90,14 @@ public class AccountService {
             account.getLock().unlock();
         }
     }
+
+    public double getBalance(String accountNumber) {
+        Account account = accountStore.get(accountNumber);
+
+        if (account == null) {
+            throw new RuntimeException("Account not found");
+        }
+
+        return account.getBalance();
+    }
 }
