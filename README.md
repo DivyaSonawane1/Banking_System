@@ -56,7 +56,7 @@ This ensures:
 
 ### 2. Thread Safety
 
-* Each `Account` has its own `ReentrantLock`
+* Each `Account` has its own `ReentrantLock.`
 * Transfers use **lock ordering** to prevent deadlocks
 * Concurrent transfers are executed via multiple threads
 
@@ -105,7 +105,7 @@ Used to enforce business rules and ensure robustness.
 
 The system simulates **concurrent fund transfers** using:
 
-* `TransactionTask implements Runnable`
+* `TransactionTask implements Runnable.`
 * Multiple threads operating on shared account data
 
 This validates correctness under concurrent access.
